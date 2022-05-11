@@ -18,10 +18,36 @@
     <body>
         <div class="container">
             <div class="row">
-                <div class="col-md-12 text-center mt-4">
+                <div class="col-md-12 text-center mt-4 pt-4">
                     <h2>
-                        Lead Generation System
+                        LinkedIn Org Spider
                     </h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-5 mt-4">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <form action="{{ URL::to('/') }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label>Import File <span class="text-danger">( xlsx files only )</span> </label>
+                                        <input type="file" name="file" class="form-control" placeholder="Import Excel File" required>
+
+                                        @if ($errors->any('file'))
+                                        <span class="text-danger small">
+                                            {{ $errors->first('file') }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
