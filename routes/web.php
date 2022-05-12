@@ -13,6 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'IndexController@index');
+Route::post('/import', 'IndexController@processExcel');
+Route::get('test/{companyName}', 'IndexController@getOrganizationDetail');

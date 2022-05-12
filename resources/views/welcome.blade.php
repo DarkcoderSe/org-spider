@@ -29,7 +29,7 @@
                     <div class="card">
                         <div class="card-body">
 
-                            <form action="{{ URL::to('/') }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ URL::to('/import') }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
@@ -41,6 +41,13 @@
                                             {{ $errors->first('file') }}
                                         </span>
                                         @endif
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12 text-right">
+                                        <button type="submit" class="btn btn-primary">
+                                            {{ __('Import') }}
+                                        </button>
                                     </div>
                                 </div>
                             </form>
