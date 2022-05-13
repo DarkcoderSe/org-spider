@@ -10,6 +10,8 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Support\Facades\Http;
 
+use App\Models\Organization;
+
 class IndexController extends Controller
 {
     public function index()
@@ -24,7 +26,7 @@ class IndexController extends Controller
 
         $sheets = Excel::toCollection(new OrganizationsImport, $path);
         // taking first sheet as per discussion
-        $sheet = $sheets->first()->skip(1)->take(10);
+        $sheet = $sheets->first()->skip(1)->take(5);
         foreach ($sheet as $organization) {
             $organizationName = $organization[0]; // Name
             if (!is_null($organizationName)) {
@@ -33,12 +35,25 @@ class IndexController extends Controller
                 $address = $this->getOrganizationDetail($organizationName);
                 // echo "${organizationName} :: ${address} <br>";
                 $organization[7] = $address;
+
+                // $org = new Organization;
+                // $org->company_name = $organization[0];
+                // $org->company_url = $organization[1];
+                // $org->source = $organization[2];
+                // $org->contact_name = $organization[3];
+                // $org->linkedin_profile = $organization[4];
+                // $org->job_title = $organization[5];
+                // $org->email_address = $organization[6];
+                // $org->headquater_address = $organization[7];
+                // $org->save();
+
             }
         }
 
 
+        // dd($sheet);
         $export = new OrganizationsExport($sheet->toArray());
-        return Excel::download($export, 'organizations-list.xlsx');
+        return Excel::download($export, 'organizations-export.xlsx');
 
     }
 

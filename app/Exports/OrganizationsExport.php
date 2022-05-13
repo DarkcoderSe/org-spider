@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+
 class OrganizationsExport implements FromArray, WithHeadings, WithColumnWidths, WithStyles
 {
     protected $organizations;
