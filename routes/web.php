@@ -16,3 +16,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'IndexController@index');
 Route::post('/import', 'IndexController@processExcel');
 Route::get('test/{companyName}', 'IndexController@getOrganizationDetail');
+Route::get('check-export', 'IndexController@checkExport');
+Route::get('export', 'IndexController@exportOrganizations');

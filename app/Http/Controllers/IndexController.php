@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Http;
 
 use App\Models\Organization;
 
+use Artisan;
+
 class IndexController extends Controller
 {
     public function index()
@@ -31,41 +33,55 @@ class IndexController extends Controller
             $organizationName = $organization[0]; // Name
             if (!is_null($organizationName)) {
                 // echo $organizationName;
-                $organizationName = str_replace(' ', '-', $organizationName);;
-                $address = $this->getOrganizationDetail($organizationName);
+                // $organizationName = str_replace(' ', '-', $organizationName);;
+                // $address = $this->getOrganizationDetail($organizationName);
                 // echo "${organizationName} :: ${address} <br>";
-                $organization[7] = $address;
+                // $organization[7] = $address;
 
-                // $org = new Organization;
-                // $org->company_name = $organization[0];
-                // $org->company_url = $organization[1];
-                // $org->source = $organization[2];
-                // $org->contact_name = $organization[3];
-                // $org->linkedin_profile = $organization[4];
-                // $org->job_title = $organization[5];
-                // $org->email_address = $organization[6];
+                Organization::delete();
+
+                $org = new Organization;
+                $org->company_name = $organization[0];
+                $org->company_url = $organization[1];
+                $org->source = $organization[2];
+                $org->contact_name = $organization[3];
+                $org->linkedin_profile = $organization[4];
+                $org->job_title = $organization[5];
+                $org->email_address = $organization[6];
                 // $org->headquater_address = $organization[7];
-                // $org->save();
+                $org->save();
 
             }
         }
 
+        // Artisan::call('schedule:work');
 
         // dd($sheet);
-        $export = new OrganizationsExport($sheet->toArray());
-        return Excel::download($export, 'organizations-export.xlsx');
+        // $export = new OrganizationsExport($sheet->toArray());
+        // return Excel::download($export, 'organizations-export.xlsx');
+        return redirect('/')->with([
+            'message' => 'A Job has been started, It will take some time to fetch addresses. A Download button will be appear after jobs done!'
+        ]);
 
     }
 
-    public function getOrganizationDetail($companyName)
+    public function checkExport()
     {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer AQVV8CIAe2gHym2LumRbmhHKTSUUPw4L9P-nDP2hnAy8YgUFuHKNYz5CSMPz8JNqD_m9IU0DHHYqspNOHutlS3viGirTR9Az62da3ZyDJjFWmhV7yyA3JDkpNb3I-Fg838THr0lSrHZ1IpwRJY2qSBCmG8VIhOW90-gtLp_cpxnZNJAchq4pzw6y5Se4w0U4iKptfWdIsk24FkMb2DVAJHcqzno27diMjAimErzwi9YVE9bVGMa2CAuBkIEV4554QHV9lyZClaJIX8HtFh9UHEHxWHLlQt1SKOPjqWtv8BSU_7Z41skrQo-gpBa_C2s6bqVYFyVIMcqyJg5OR_h6N8OwiigtVw'
-        ])->get("https://api.linkedin.com/v2/organizations?q=vanityName&vanityName=${companyName}");
+        $nonExportedOrgs = Organization::where('status', 0)->count();
+        $exportedOrgs = Organization::where('status', 1)->count();
 
-        $response = json_decode($response->body());
-        $address = $response->elements[0]->locations[0]->address ?? [];
-        $result = ($address->line1 ?? '') . ', ' . ($address->city ?? '') . ', ' . ($address->country ?? '');
-        return $result;
+        return response()->json([
+            'nonExportedOrgs' => $nonExportedOrgs,
+            'exportedOrgs' => $exportedOrgs
+        ], 200);
     }
+
+    public function exportOrganizations()
+    {
+        $orgs = Organization::select('company_name', 'company_url', 'source', 'contact_name', 'linkedin_profile', 'job_title', 'email_address', 'headquater_address')->get();
+        $export = new OrganizationsExport($orgs->toArray());
+        return Excel::download($export, 'organizations-spider-report.xlsx');
+    }
+
+
 }

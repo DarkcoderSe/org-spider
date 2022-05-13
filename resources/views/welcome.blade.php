@@ -57,6 +57,54 @@
 
                 </div>
             </div>
+
+            @if (session('message'))
+            <div class="row justify-content-center">
+                <div class="col-md-5 mt-4">
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ session('message') }}
+                    </div>
+
+                    <script>
+                        $(".alert").alert();
+                    </script>
+                </div>
+            </div>
+            @endif
+
+            <div class="row justify-content-center">
+                <div class="col-md-5 mt-4" id="notify">
+
+                </div>
+            </div>
         </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            $(document).ready(function() {
+                setInterval(() => {
+                    $.get('check-export', function(response) {
+                        let nonExportedOrgs = Number(response['nonExportedOrgs']);
+                        let exportedOrgs = Number(response['exportedOrgs']);
+                        let totalOrgs = nonExportedOrgs + exportedOrgs;
+                        if (totalOrgs > 0) {
+                            if (totalOrgs == exportedOrgs) {
+                                $('#notify').html(`<div class="alert alert-primary" role="alert">
+                                                        <strong>Download Ready</strong> : Your list is ready to download, Please <a href="">Click here to Download</a>
+                                                    </div>`);
+                            }
+                            // else {
+                            //     $('#notify').html(`<div class="alert alert-primary" role="alert">
+                            //                             <strong>Download Ready</strong> : Your list is ready to download, Please <a href="">Click here to Download</a>
+                            //                         </div>`);
+                            // }
+                        }
+                    });
+                }, 60000);
+            });
+        </script>
     </body>
 </html>
