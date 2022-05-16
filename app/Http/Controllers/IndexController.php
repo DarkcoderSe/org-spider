@@ -38,7 +38,7 @@ class IndexController extends Controller
                 // echo "${organizationName} :: ${address} <br>";
                 // $organization[7] = $address;
 
-                Organization::delete();
+                Organization::truncate();
 
                 $org = new Organization;
                 $org->company_name = $organization[0];
